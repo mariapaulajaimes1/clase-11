@@ -48,7 +48,7 @@ canvas_result = st_canvas(
     hide_axes=True,
     enable_dragging=True,
     enable_zoom=True,
-    stroke_alpha=opacity  # Aplicar opacidad
+    stroke_alpha=opacity
 )
 
 # Botón para analizar el dibujo
