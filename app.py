@@ -23,7 +23,7 @@ with st.sidebar:
     
     # Controles para personalización del lienzo
     stroke_width = st.slider("🎚️ Ancho de Línea", 1, 50, 8, step=1)
-    drawing_mode = st.selectbox("✏️ Herramienta:", ["Dibujar libremente", "Línea", "Rectángulo", "Círculo", "Transformar"])
+    drawing_mode = st.selectbox("✏️ Herramienta:", ["draw", "line", "rect", "circle", "transform"])
     
     st.write("### 🌈 Selecciona el Color de Trazo")
     stroke_color = st.color_picker("Elige un color", "#FF5733")
