@@ -1,7 +1,6 @@
 import os
 import streamlit as st
 import base64
-from openai import OpenAI
 import openai
 from PIL import Image
 import numpy as np
@@ -54,7 +53,8 @@ def encode_image_to_base64(image_path):
             encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
             return encoded_image
     except FileNotFoundError:
-        return "Error: La imagen no se encontró en la ruta especificada."
+        st.error("Error: La imagen no se encontró en la ruta especificada.")
+        return None
 
 # Procesar el análisis si se ha dibujado algo y se ha ingresado la clave API
 if canvas_result.image_data is not None and ke and analyze_button:
@@ -71,22 +71,23 @@ if canvas_result.image_data is not None and ke and analyze_button:
     # Crear un mensaje para el análisis
     prompt_text = "Describe brevemente esta imagen en español."
 
-    try:
-        with st.spinner("Analizando..."):
-            response = openai.ChatCompletion.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "user", "content": prompt_text},
-                    {"role": "user", "content": f"data:image/png;base64,{base64_image}"}
-                ],
-                max_tokens=500,
-            )
+    if base64_image:  # Solo proceder si la codificación fue exitosa
+        try:
+            with st.spinner("Analizando..."):
+                response = openai.ChatCompletion.create(
+                    model="gpt-4",
+                    messages=[
+                        {"role": "user", "content": prompt_text},
+                        {"role": "user", "content": f"data:image/png;base64,{base64_image}"}
+                    ],
+                    max_tokens=500,
+                )
 
-            full_response = response.choices[0].message["content"]
-            st.write("### 🔍 Resultado del Análisis:")
-            st.success(full_response)  # Mostrar resultado con estilo de éxito
-    except Exception as e:
-        st.error(f"Error durante el análisis: {e}")
+                full_response = response.choices[0].message["content"]
+                st.write("### 🔍 Resultado del Análisis:")
+                st.success(full_response)  # Mostrar resultado con estilo de éxito
+        except Exception as e:
+            st.error(f"Error durante el análisis: {e}")
 
 # Advertencias si no se cumple alguna condición
 else:
