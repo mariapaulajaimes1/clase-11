@@ -11,38 +11,41 @@ from streamlit_drawable_canvas import st_canvas
 st.set_page_config(page_title="✨ Lienzo Creativo AI ✨", layout="wide")
 
 # Título y descripción de la aplicación
-st.title("🖍️ Bienvenido al Lienzo Creativo con IA 🎉")
-st.markdown("#### Despierta tu creatividad y permite que la IA analice tus trazos únicos! 🚀")
+st.title("🖍️ Lienzo Creativo con IA 🎨")
+st.markdown("""
+    #### Despierta tu creatividad y deja que la inteligencia artificial analice tus obras.
+    🎉 ¡Crea, dibuja y recibe análisis instantáneos! 🚀
+""")
 
 # Sidebar para opciones de personalización
 with st.sidebar:
-    st.title("🎨 Opciones de Personalización")
-    st.write("Ajusta las herramientas para crear tu obra maestra.")
-
-    # Controles para personalización del lienzo
-    stroke_width = st.slider("🎚️ Ancho de Línea", 1, 50, 8)
-    drawing_mode = st.selectbox("✏️ Herramienta:", ["freedraw", "line", "rect", "circle", "transform"])
+    st.header("🎨 Personaliza tu Experiencia")
+    st.write("Ajusta las herramientas para dar vida a tu creatividad.")
     
-    st.write("### 🌈 Color de Trazo")
+    # Controles para personalización del lienzo
+    stroke_width = st.slider("🎚️ Ancho de Línea", 1, 50, 8, step=1)
+    drawing_mode = st.selectbox("✏️ Herramienta:", ["Dibujar libremente", "Línea", "Rectángulo", "Círculo", "Transformar"])
+    
+    st.write("### 🌈 Selecciona el Color de Trazo")
     stroke_color = st.color_picker("Elige un color", "#FF5733")
     
-    ke = st.text_input("🔑 API Key de OpenAI", type="password")
+    ke = st.text_input("🔑 Clave API de OpenAI", type="password", help="Ingresa tu clave API aquí.")
     os.environ['OPENAI_API_KEY'] = ke
 
 # Espacio para dibujar
-st.write("### 🎉 Tu Espacio Creativo sin Límites")
+st.write("### 🎉 Tu Espacio Creativo Sin Límites")
 canvas_result = st_canvas(
     stroke_width=stroke_width,
     stroke_color=stroke_color,
     background_color="#FFF8DC", 
-    height=700,  
-    width=1200,  
+    height=600,  
+    width=1000,  
     drawing_mode=drawing_mode,
     key="canvas",
 )
 
 # Botón para analizar el dibujo
-analyze_button = st.button("🔍 Analizar Dibujo con IA 🧠", type="primary")
+analyze_button = st.button("🔍 Analizar Dibujo con IA 🧠")
 
 # Función para codificar la imagen en base64
 def encode_image_to_base64(image_path):
@@ -55,7 +58,7 @@ def encode_image_to_base64(image_path):
 
 # Procesar el análisis si se ha dibujado algo y se ha ingresado la clave API
 if canvas_result.image_data is not None and ke and analyze_button:
-    st.write("🔄 **Procesando tu obra de arte...**")
+    st.write("🔄 **Procesando tu obra maestra...**")
 
     # Convertir el canvas a imagen y guardarla
     input_numpy_array = np.array(canvas_result.image_data)
@@ -66,7 +69,7 @@ if canvas_result.image_data is not None and ke and analyze_button:
     base64_image = encode_image_to_base64("img.png")
     
     # Crear un mensaje para el análisis
-    prompt_text = "Describe de forma breve y en español esta imagen."
+    prompt_text = "Describe brevemente esta imagen en español."
 
     try:
         with st.spinner("Analizando..."):
@@ -88,7 +91,7 @@ if canvas_result.image_data is not None and ke and analyze_button:
 # Advertencias si no se cumple alguna condición
 else:
     if not ke:
-        st.warning("⚠️ Por favor, ingresa tu API Key de OpenAI.")
+        st.warning("⚠️ Por favor, ingresa tu clave API de OpenAI.")
 
 # Estilos CSS para mejorar la apariencia
 st.markdown(
@@ -97,9 +100,19 @@ st.markdown(
         .reportview-container {
             background-color: #FFF8DC;  /* Fondo en amarillo suave */
             padding: 20px;
+            border-radius: 10px;
         }
         .sidebar .sidebar-content {
             background-color: #FFE4B5;  /* Fondo lateral en tono melón */
+            border-radius: 10px;
+            padding: 15px;
+        }
+        h1, h2, h3 {
+            color: #4B0082; /* Cambiar el color de los encabezados */
+        }
+        .stButton>button {
+            background-color: #4CAF50; /* Color verde para el botón de analizar */
+            color: white;
         }
     </style>
     """,
