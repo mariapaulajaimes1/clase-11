@@ -7,35 +7,32 @@ import numpy as np
 from streamlit_drawable_canvas import st_canvas
 
 # Configuración de la página
-st.set_page_config(page_title="✨ Lienzo Creativo AI ✨", layout="wide")
+st.set_page_config(page_title="🎨 Lienzo Creativo con IA", layout="wide")
 
 # Título y descripción de la aplicación
-st.title("🎨 Lienzo Creativo con IA 🖌️")
+st.title("🌈 Lienzo Creativo con Inteligencia Artificial ✨")
 st.markdown("""
-    #### Desata tu imaginación y permite que la inteligencia artificial explore tus obras.
-    🚀 ¡Crea, dibuja y recibe análisis detallados al instante! ✨
+    #### Desata tu creatividad y permite que la IA analice tus obras.
+    🎉 ¡Crea, dibuja y recibe retroalimentación al instante! 🚀
 """)
 
 # Sidebar para opciones de personalización
 with st.sidebar:
-    st.header("🛠️ Personaliza tu Experiencia")
-    st.write("Ajusta las herramientas y colores para dar vida a tu creatividad.")
+    st.header("🛠️ Personaliza tu Experiencia de Dibujo")
+    st.write("Ajusta las herramientas y colores para dar vida a tus ideas.")
     
     # Controles para personalización del lienzo
-    stroke_width = st.slider("⚙️ Grosor de Línea", 1, 50, 8, step=1)
-    drawing_mode = st.selectbox("🖌️ Herramienta de Dibujo:", ["Dibujar libremente", "Línea", "Rectángulo", "Círculo", "Transformar"])
+    stroke_width = st.slider("📏 Grosor de Línea", 1, 50, 8, step=1)
+    drawing_mode = st.selectbox("✏️ Selecciona Herramienta:", ["Dibujar libremente", "Línea", "Rectángulo", "Círculo", "Transformar"])
     
-    st.write("### 🎨 Selecciona el Color de Trazo")
-    stroke_color = st.color_picker("Elige un color", "#FF5733")
+    st.write("### 🎨 Escoge el Color del Trazo")
+    stroke_color = st.color_picker("Selecciona un color", "#FF5733")
     
-    ke = st.text_input("🔑 Clave API de OpenAI", type="password", help="Introduce tu clave API de OpenAI aquí.")
+    ke = st.text_input("🔑 Clave API de OpenAI", type="password", help="Introduce tu clave API aquí para analizar tus dibujos.")
     os.environ['OPENAI_API_KEY'] = ke
 
-    st.write("### 📝 Comentarios")
-    comments = st.text_area("Añade comentarios sobre tu creación:", height=100)
-
 # Espacio para dibujar
-st.write("### 🌟 Tu Espacio Creativo Sin Límites")
+st.write("### 🎊 Tu Espacio Creativo Sin Límites")
 canvas_result = st_canvas(
     stroke_width=stroke_width,
     stroke_color=stroke_color,
@@ -47,7 +44,7 @@ canvas_result = st_canvas(
 )
 
 # Botón para analizar el dibujo
-analyze_button = st.button("🔍 Analizar Dibujo con IA 🧠")
+analyze_button = st.button("🔍 Analizar Dibujo con IA")
 save_button = st.button("💾 Guardar Dibujo")
 
 # Función para codificar la imagen en base64
@@ -66,13 +63,13 @@ def save_image(image):
     """Guarda la imagen en el sistema."""
     try:
         image.save("mi_dibujo.png")
-        st.success("🖼️ ¡Tu dibujo ha sido guardado como 'mi_dibujo.png'!")
+        st.success("🖼️ ¡Dibujo guardado como 'mi_dibujo.png'!")
     except Exception as e:
         st.error(f"Error al guardar la imagen: {e}")
 
 # Procesar el análisis si se ha dibujado algo y se ha ingresado la clave API
 if canvas_result.image_data is not None and ke and analyze_button:
-    st.write("🔄 **Analizando tu obra maestra...**")
+    st.write("🔄 **Procesando tu obra maestra...**")
 
     # Convertir el canvas a imagen y guardarla
     input_numpy_array = np.array(canvas_result.image_data)
@@ -83,7 +80,7 @@ if canvas_result.image_data is not None and ke and analyze_button:
     base64_image = encode_image_to_base64("img.png")
     
     # Crear un mensaje para el análisis
-    prompt_text = "Proporciona un análisis detallado de esta imagen en español."
+    prompt_text = "Proporciona un análisis breve de esta imagen en español."
 
     if base64_image:  # Solo proceder si la codificación fue exitosa
         try:
@@ -133,7 +130,7 @@ st.markdown(
             color: #4B0082; /* Cambiar el color de los encabezados */
         }
         .stButton>button {
-            background-color: #4CAF50; /* Color verde para los botones */
+            background-color: #4CAF50; /* Color verde para los botones de analizar y guardar */
             color: white;
         }
     </style>
