@@ -1,104 +1,142 @@
 import os
 import streamlit as st
 import base64
-from openai import OpenAI
 import openai
 from PIL import Image
 import numpy as np
 from streamlit_drawable_canvas import st_canvas
 
+# Configuración de la página
+st.set_page_config(page_title="✨ Lienzo Creativo AI ✨", layout="wide")
 
-st.set_page_config(page_title="✨ Lienzo Creativo AI ✨")
+# Título y descripción de la aplicación
+st.title("🎨 Lienzo Creativo con IA 🖌️")
+st.markdown("""
+    #### Desata tu imaginación y permite que la inteligencia artificial explore tus obras.
+    🚀 ¡Crea, dibuja y recibe análisis detallados al instante! ✨
+""")
 
-
-st.title("🖍️ Bienvenido al Lienzo Creativo con Inteligencia Artificial 🎉")
-st.markdown("#### Despierta tu creatividad y permite que la IA analice tus trazos únicos! 🚀")
-
-
+# Sidebar para opciones de personalización
 with st.sidebar:
-    st.title("🎨 Opciones de Personalización")
-    st.write("Ajusta las herramientas para crear tu obra maestra.")
-
+    st.header("🛠️ Personaliza tu Experiencia")
+    st.write("Ajusta las herramientas y colores para dar vida a tu creatividad.")
     
-    stroke_width = st.slider("🎚️ Ancho de Línea", 1, 50, 8)
-    drawing_mode = st.selectbox("✏️ Herramienta:", ["freedraw", "line", "rect", "circle", "transform"])
-    st.write("### 🌈 Color de Trazo")
+    # Controles para personalización del lienzo
+    stroke_width = st.slider("⚙️ Grosor de Línea", 1, 50, 8, step=1)
+    drawing_mode = st.selectbox("🖌️ Herramienta de Dibujo:", ["Dibujar libremente", "Línea", "Rectángulo", "Círculo", "Transformar"])
+    
+    st.write("### 🎨 Selecciona el Color de Trazo")
     stroke_color = st.color_picker("Elige un color", "#FF5733")
-
-   
-    ke = st.text_input("🔑 API Key de OpenAI", type="password")
+    
+    ke = st.text_input("🔑 Clave API de OpenAI", type="password", help="Introduce tu clave API de OpenAI aquí.")
     os.environ['OPENAI_API_KEY'] = ke
 
+    st.write("### 📝 Comentarios")
+    comments = st.text_area("Añade comentarios sobre tu creación:", height=100)
 
-st.write("### 🎉 Tu Espacio Creativo sin Límites")
+# Espacio para dibujar
+st.write("### 🌟 Tu Espacio Creativo Sin Límites")
 canvas_result = st_canvas(
     stroke_width=stroke_width,
     stroke_color=stroke_color,
     background_color="#FFF8DC", 
-    height=700,  
-    width=1200,  
+    height=600,  
+    width=1000,  
     drawing_mode=drawing_mode,
     key="canvas",
 )
 
+# Botón para analizar el dibujo
+analyze_button = st.button("🔍 Analizar Dibujo con IA 🧠")
+save_button = st.button("💾 Guardar Dibujo")
 
-analyze_button = st.button("🔍 Analizar Dibujo con IA 🧠", type="primary")
-
-
+# Función para codificar la imagen en base64
 def encode_image_to_base64(image_path):
+    """Codifica una imagen en formato base64."""
     try:
         with open(image_path, "rb") as image_file:
             encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
             return encoded_image
     except FileNotFoundError:
-        return "Error: La imagen no se encontró en la ruta especificada."
+        st.error("Error: La imagen no se encontró en la ruta especificada.")
+        return None
 
+# Función para guardar la imagen
+def save_image(image):
+    """Guarda la imagen en el sistema."""
+    try:
+        image.save("mi_dibujo.png")
+        st.success("🖼️ ¡Tu dibujo ha sido guardado como 'mi_dibujo.png'!")
+    except Exception as e:
+        st.error(f"Error al guardar la imagen: {e}")
 
+# Procesar el análisis si se ha dibujado algo y se ha ingresado la clave API
 if canvas_result.image_data is not None and ke and analyze_button:
-    st.write("🔄 **Procesando tu obra de arte...**")
+    st.write("🔄 **Analizando tu obra maestra...**")
 
-   
+    # Convertir el canvas a imagen y guardarla
     input_numpy_array = np.array(canvas_result.image_data)
     input_image = Image.fromarray(input_numpy_array.astype("uint8"), "RGBA")
-    input_image.save("img.png")
-
     
+    # Guardar imagen y codificar a base64
+    input_image.save("img.png")
     base64_image = encode_image_to_base64("img.png")
     
-    
-    prompt_text = "Describe de forma breve y en español esta imagen."
+    # Crear un mensaje para el análisis
+    prompt_text = "Proporciona un análisis detallado de esta imagen en español."
 
-    try:
-        with st.spinner("Analizando..."):
-            response = openai.ChatCompletion.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "user", "content": prompt_text},
-                    {"role": "user", "content": f"data:image/png;base64,{base64_image}"}
-                ],
-                max_tokens=500,
-            )
+    if base64_image:  # Solo proceder si la codificación fue exitosa
+        try:
+            with st.spinner("Analizando..."):
+                response = openai.ChatCompletion.create(
+                    model="gpt-4",
+                    messages=[
+                        {"role": "user", "content": prompt_text},
+                        {"role": "user", "content": f"data:image/png;base64,{base64_image}"}
+                    ],
+                    max_tokens=500,
+                )
 
-            
-            full_response = response.choices[0].message["content"]
-            st.write("### 🔍 Resultado del Análisis:")
-            st.write(full_response)
-    except Exception as e:
-        st.error(f"Error durante el análisis: {e}")
+                full_response = response.choices[0].message["content"]
+                st.write("### 🔍 Resultado del Análisis:")
+                st.success(full_response)  # Mostrar resultado con estilo de éxito
+        except Exception as e:
+            st.error(f"Error durante el análisis: {e}")
+
+# Guardar la imagen si el botón es presionado
+if save_button:
+    if canvas_result.image_data is not None:
+        save_image(input_image)
+    else:
+        st.warning("⚠️ No hay dibujo para guardar.")
+
+# Advertencias si no se cumple alguna condición
 else:
-    
     if not ke:
-        st.warning("Por favor, ingresa tu API Key de OpenAI.")
+        st.warning("⚠️ Por favor, ingresa tu clave API de OpenAI.")
 
-
-st.markdown("""
-<style>
-    .reportview-container {
-        background-color: #FFF8DC;  /* Fondo en amarillo suave */
-        padding: 20px;
-    }
-    .sidebar .sidebar-content {
-        background-color: #FFE4B5;  /* Fondo lateral en tono melón */
-    }
-</style>
-""", unsafe_allow_html=True)
+# Estilos CSS para mejorar la apariencia
+st.markdown(
+    """
+    <style>
+        .reportview-container {
+            background-color: #FFF8DC;  /* Fondo en amarillo suave */
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .sidebar .sidebar-content {
+            background-color: #FFE4B5;  /* Fondo lateral en tono melón */
+            border-radius: 10px;
+            padding: 15px;
+        }
+        h1, h2, h3 {
+            color: #4B0082; /* Cambiar el color de los encabezados */
+        }
+        .stButton>button {
+            background-color: #4CAF50; /* Color verde para los botones */
+            color: white;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
