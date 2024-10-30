@@ -27,6 +27,9 @@ with st.sidebar:
     
     st.write("### 🌈 Selecciona el Color de Trazo")
     stroke_color = st.color_picker("Elige un color", "#FF5733")
+
+    # Nuevo control para opacidad
+    opacity = st.slider("🔆 Opacidad", 0.0, 1.0, 1.0, step=0.1)
     
     ke = st.text_input("🔑 Clave API de OpenAI", type="password", help="Ingresa tu clave API aquí.")
     os.environ['OPENAI_API_KEY'] = ke
@@ -36,15 +39,21 @@ st.write("### 🎉 Tu Espacio Creativo Sin Límites")
 canvas_result = st_canvas(
     stroke_width=stroke_width,
     stroke_color=stroke_color,
-    background_color="#FFF8DC", 
-    height=600,  
-    width=1000,  
+    background_color="#FFF8DC",
+    height=600,
+    width=1000,
     drawing_mode=drawing_mode,
     key="canvas",
+    initial_background_color="#FFFFFF",
+    hide_axes=True,
+    enable_dragging=True,
+    enable_zoom=True,
+    stroke_alpha=opacity  # Aplicar opacidad
 )
 
 # Botón para analizar el dibujo
 analyze_button = st.button("🔍 Analizar Dibujo con IA 🧠")
+save_button = st.button("💾 Guardar Dibujo")
 
 # Función para codificar la imagen en base64
 def encode_image_to_base64(image_path):
@@ -56,6 +65,14 @@ def encode_image_to_base64(image_path):
         st.error("Error: La imagen no se encontró en la ruta especificada.")
         return None
 
+# Función para guardar la imagen
+def save_image(image):
+    try:
+        image.save("mi_dibujo.png")
+        st.success("🖼️ ¡Dibujo guardado como 'mi_dibujo.png'!")
+    except Exception as e:
+        st.error(f"Error al guardar la imagen: {e}")
+
 # Procesar el análisis si se ha dibujado algo y se ha ingresado la clave API
 if canvas_result.image_data is not None and ke and analyze_button:
     st.write("🔄 **Procesando tu obra maestra...**")
@@ -63,9 +80,9 @@ if canvas_result.image_data is not None and ke and analyze_button:
     # Convertir el canvas a imagen y guardarla
     input_numpy_array = np.array(canvas_result.image_data)
     input_image = Image.fromarray(input_numpy_array.astype("uint8"), "RGBA")
+    
+    # Guardar imagen y codificar a base64
     input_image.save("img.png")
-
-    # Codificar la imagen a base64
     base64_image = encode_image_to_base64("img.png")
     
     # Crear un mensaje para el análisis
@@ -88,6 +105,13 @@ if canvas_result.image_data is not None and ke and analyze_button:
                 st.success(full_response)  # Mostrar resultado con estilo de éxito
         except Exception as e:
             st.error(f"Error durante el análisis: {e}")
+
+# Guardar la imagen si el botón es presionado
+if save_button:
+    if canvas_result.image_data is not None:
+        save_image(input_image)
+    else:
+        st.warning("⚠️ No hay dibujo para guardar.")
 
 # Advertencias si no se cumple alguna condición
 else:
@@ -112,7 +136,7 @@ st.markdown(
             color: #4B0082; /* Cambiar el color de los encabezados */
         }
         .stButton>button {
-            background-color: #4CAF50; /* Color verde para el botón de analizar */
+            background-color: #4CAF50; /* Color verde para los botones */
             color: white;
         }
     </style>
