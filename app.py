@@ -7,31 +7,31 @@ import numpy as np
 from streamlit_drawable_canvas import st_canvas
 
 # Configuración de la página
-st.set_page_config(page_title="✨ Lienzo Creativo AI ✨", layout="wide")
+st.set_page_config(page_title="🖌️ Lienzo Creativo AI 🎉", layout="wide")
 
 # Título y descripción de la aplicación
-st.title("🖍️ Lienzo Creativo con IA 🎨")
+st.title("🌟 Lienzo Creativo con Inteligencia Artificial 🌈")
 st.markdown("""
-    #### Despierta tu creatividad y deja que la inteligencia artificial analice tus obras.
-    🎉 ¡Crea, dibuja y recibe análisis instantáneos! 🚀
+    #### Explora tu imaginación y deja que la IA analice tus creaciones.
+    ✨ ¡Dibuja, pinta y recibe comentarios instantáneos! 🎊
 """)
 
 # Sidebar para opciones de personalización
 with st.sidebar:
-    st.header("🎨 Personaliza tu Experiencia")
-    st.write("Ajusta las herramientas para dar vida a tu creatividad.")
+    st.header("🎨 Personaliza tu Herramienta")
+    st.write("Ajusta las herramientas para dar vida a tus ideas.")
     
     # Controles para personalización del lienzo
-    stroke_width = st.slider("🎚️ Ancho de Línea", 1, 50, 8, step=1)
-    drawing_mode = st.selectbox("✏️ Herramienta:", ["draw", "line", "rect", "circle", "transform"])
+    stroke_width = st.slider("🖍️ Grosor de Línea", 1, 100, 10, step=1)
+    drawing_mode = st.selectbox("🖌️ Selecciona Herramienta:", ["Dibujar", "Línea", "Rectángulo", "Círculo", "Pincel", "Borrador", "Transformar"])
     
-    st.write("### 🌈 Selecciona el Color de Trazo")
-    stroke_color = st.color_picker("Elige un color", "#FF5733")
+    st.write("### 🌈 Escoge el Color de Trazo")
+    stroke_color = st.color_picker("Elige un color", "#1E90FF")  # Color azul brillante
 
     # Nuevo control para opacidad
     opacity = st.slider("🔆 Opacidad", 0.0, 1.0, 1.0, step=0.1)
     
-    ke = st.text_input("🔑 Clave API de OpenAI", type="password", help="Ingresa tu clave API aquí.")
+    ke = st.text_input("🔑 Clave API de OpenAI", type="password", help="Introduce tu clave API aquí.")
     os.environ['OPENAI_API_KEY'] = ke
 
 # Espacio para dibujar
@@ -39,7 +39,7 @@ st.write("### 🎉 Tu Espacio Creativo Sin Límites")
 canvas_result = st_canvas(
     stroke_width=stroke_width,
     stroke_color=stroke_color,
-    background_color="#FFF8DC",
+    background_color="#F0F8FF",  # Color de fondo azul claro
     height=600,
     width=1000,
     drawing_mode=drawing_mode,
@@ -125,20 +125,20 @@ st.markdown(
     """
     <style>
         .reportview-container {
-            background-color: #FFF8DC;  /* Fondo en amarillo suave */
+            background-color: #F0F8FF;  /* Fondo azul claro */
             padding: 20px;
             border-radius: 10px;
         }
         .sidebar .sidebar-content {
-            background-color: #FFE4B5;  /* Fondo lateral en tono melón */
+            background-color: #FFDEAD;  /* Fondo lateral en tono crema */
             border-radius: 10px;
             padding: 15px;
         }
         h1, h2, h3 {
-            color: #4B0082; /* Cambiar el color de los encabezados */
+            color: #FF4500; /* Cambiar el color de los encabezados a naranja */
         }
         .stButton>button {
-            background-color: #4CAF50; /* Color verde para los botones */
+            background-color: #4682B4; /* Color azul para los botones */
             color: white;
         }
     </style>
