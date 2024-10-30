@@ -91,19 +91,17 @@ else:
         st.warning("⚠️ Por favor, ingresa tu API Key de OpenAI.")
 
 # Estilos CSS para mejorar la apariencia
-st.markdown("""
-<style>
-    .reportview-container {
-        background-color: #FFF8DC;  /* Fondo en amarillo suave */
-        padding: 20px;
-    }
-    .sidebar .sidebar-content {
-        background-color: #FFE4B5;  /* Fondo lateral en tono melón */
-    }
-</style>
-""", unsafe_allow_html=True)
-
-        background-color: #FFE4B5;  /* Fondo lateral en tono melón */
-    }
-</style>
-""", unsafe_allow_html=True)
+st.markdown(
+    """
+    <style>
+        .reportview-container {
+            background-color: #FFF8DC;  /* Fondo en amarillo suave */
+            padding: 20px;
+        }
+        .sidebar .sidebar-content {
+            background-color: #FFE4B5;  /* Fondo lateral en tono melón */
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
