@@ -85,7 +85,7 @@ if canvas_result.image_data is not None and ke and analyze_button:
     input_image.save("img.png")
     base64_image = encode_image_to_base64("img.png")
     
-    # Crear un mensaje para el análisis
+
     prompt_text = "Describe brevemente esta imagen en español."
 
     if base64_image:  # Solo proceder si la codificación fue exitosa
