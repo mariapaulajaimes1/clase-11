@@ -57,6 +57,7 @@ save_button = st.button("💾 Guardar Dibujo")
 
 # Función para codificar la imagen en base64
 def encode_image_to_base64(image_path):
+    """Codifica una imagen en formato base64."""
     try:
         with open(image_path, "rb") as image_file:
             encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
@@ -67,6 +68,7 @@ def encode_image_to_base64(image_path):
 
 # Función para guardar la imagen
 def save_image(image):
+    """Guarda la imagen en el sistema."""
     try:
         image.save("mi_dibujo.png")
         st.success("🖼️ ¡Dibujo guardado como 'mi_dibujo.png'!")
@@ -85,7 +87,7 @@ if canvas_result.image_data is not None and ke and analyze_button:
     input_image.save("img.png")
     base64_image = encode_image_to_base64("img.png")
     
-
+    # Crear un mensaje para el análisis
     prompt_text = "Describe brevemente esta imagen en español."
 
     if base64_image:  # Solo proceder si la codificación fue exitosa
